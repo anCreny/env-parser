@@ -74,15 +74,11 @@ func (e *EnvParser) fillField(fType reflect.StructField, fValue reflect.Value, t
 		}
 
 	case reflect.Ptr:
-		if fValue.Elem().Kind() == reflect.Invalid {
-			fValue = reflect.New(fValue.Type().Elem())
-		}
-
 		if err := e.fillField(fType, fValue.Elem(), tagValue); err != nil {
 			return err
 		}
 
-	case reflect.Array, reflect.Chan, reflect.Complex128, reflect.Complex64, reflect.Func, reflect.Map, reflect.Slice:
+	case reflect.Array, reflect.Chan, reflect.Complex128, reflect.Complex64, reflect.Func, reflect.Map, reflect.Slice, reflect.Interface:
 		return nil
 
 	case reflect.Invalid:
@@ -117,6 +113,22 @@ func (e *EnvParser) fillField(fType reflect.StructField, fValue reflect.Value, t
 
 			fValue.SetInt(int64(value))
 
+		case reflect.Int8:
+			value, err := strconv.ParseInt(envValue, 10, 8)
+			if err != nil {
+				return err
+			}
+
+			fValue.SetInt(value)
+
+		case reflect.Int16:
+			value, err := strconv.ParseInt(envValue, 10, 16)
+			if err != nil {
+				return err
+			}
+
+			fValue.SetInt(value)
+
 		case reflect.Int32:
 			value, err := strconv.ParseInt(envValue, 10, 32)
 			if err != nil {
@@ -132,6 +144,46 @@ func (e *EnvParser) fillField(fType reflect.StructField, fValue reflect.Value, t
 			}
 
 			fValue.SetInt(value)
+
+		case reflect.Uint:
+			value, err := strconv.ParseUint(envValue, 10, 64)
+			if err != nil {
+				return err
+			}
+
+			fValue.SetUint(value)
+
+		case reflect.Uint8:
+			value, err := strconv.ParseUint(envValue, 10, 8)
+			if err != nil {
+				return err
+			}
+
+			fValue.SetUint(value)
+
+		case reflect.Uint16:
+			value, err := strconv.ParseUint(envValue, 10, 16)
+			if err != nil {
+				return err
+			}
+
+			fValue.SetUint(value)
+
+		case reflect.Uint32:
+			value, err := strconv.ParseUint(envValue, 10, 32)
+			if err != nil {
+				return err
+			}
+
+			fValue.SetUint(value)
+
+		case reflect.Uint64:
+			value, err := strconv.ParseUint(envValue, 10, 64)
+			if err != nil {
+				return err
+			}
+
+			fValue.SetUint(value)
 
 		case reflect.Float32:
 			value, err := strconv.ParseFloat(envValue, 32)
