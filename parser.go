@@ -125,6 +125,14 @@ func (e *EnvParser) fillField(fType reflect.StructField, fValue reflect.Value, t
 
 			fValue.SetInt(value)
 
+		case reflect.Int64:
+			value, err := strconv.ParseInt(envValue, 10, 64)
+			if err != nil {
+				return err
+			}
+
+			fValue.SetInt(value)
+
 		case reflect.Float32:
 			value, err := strconv.ParseFloat(envValue, 32)
 			if err != nil {
