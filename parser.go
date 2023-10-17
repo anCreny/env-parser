@@ -11,10 +11,11 @@ import (
 type EnvParser struct {
 	tag     string
 	useName bool
+	safe    bool
 }
 
-func New(tag string, useName bool) *EnvParser {
-	return &EnvParser{tag, useName}
+func New(tag string, useName, safe bool) *EnvParser {
+	return &EnvParser{tag, useName, safe}
 }
 
 func (e *EnvParser) Parse(structure interface{}) error {
@@ -85,6 +86,10 @@ func (e *EnvParser) fillField(fType reflect.StructField, fValue reflect.Value, t
 		return fmt.Errorf("type is invalid")
 
 	default:
+		if e.safe && !fValue.IsZero() {
+			return nil
+		}
+
 		tagValue = strings.TrimSuffix(tagValue, ".")
 
 		envValue := os.Getenv(tagValue)
