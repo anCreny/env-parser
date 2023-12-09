@@ -12,10 +12,11 @@ type EnvParser struct {
 	tag     string
 	useName bool
 	safe    bool
+	delim   string
 }
 
-func New(tag string, useName, safe bool) *EnvParser {
-	return &EnvParser{tag, useName, safe}
+func New(tag, delim string, useName, safe bool) *EnvParser {
+	return &EnvParser{tag, useName, safe, delim}
 }
 
 func (e *EnvParser) Parse(structure interface{}) error {
@@ -48,9 +49,9 @@ func (e *EnvParser) Parse(structure interface{}) error {
 func (e *EnvParser) fillField(fType reflect.StructField, fValue reflect.Value, tagValue string) error {
 	if fValue.Kind() != reflect.Ptr {
 		if tValue := fType.Tag.Get(e.tag); tValue != "" {
-			tagValue += strings.ToUpper(tValue) + "."
+			tagValue += strings.ToUpper(tValue) + e.delim
 		} else if e.useName {
-			tagValue += strings.ToUpper(fType.Name) + "."
+			tagValue += strings.ToUpper(fType.Name) + e.delim
 		}
 	}
 
@@ -90,7 +91,7 @@ func (e *EnvParser) fillField(fType reflect.StructField, fValue reflect.Value, t
 			return nil
 		}
 
-		tagValue = strings.TrimSuffix(tagValue, ".")
+		tagValue = strings.TrimSuffix(tagValue, e.delim)
 
 		envValue := os.Getenv(tagValue)
 
